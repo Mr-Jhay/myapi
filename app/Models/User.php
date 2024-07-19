@@ -30,6 +30,8 @@ class User extends Authenticatable
         'lname',
         'sex',
         'usertype',
+        'email',
+        'Mobile_no',
         'password',
         
     ];

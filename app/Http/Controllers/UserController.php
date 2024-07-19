@@ -31,6 +31,8 @@ class UserController extends Controller
             'lname'=> ['required', 'string'],
             'sex'=> ['required', 'string'],
             'usertype'=> ['required', 'string'],
+            'email'=> ['required', 'email','unique:users'],
+            'Mobile_no'=> ['required', 'integer', 'min:10','unique:users,Mobile_no'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
 
         ]);
@@ -42,6 +44,8 @@ class UserController extends Controller
             'lname' => $data['lname'],
             'sex' => $data['sex'],
             'usertype' => $data['usertype'],
+            'email' => $data['email'],
+            'Mobile_no' => $data['Mobile_no'],
             'password' => bcrypt($data['password']),
         ]);
     
@@ -54,26 +58,26 @@ class UserController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'idnumber' => ['required', 'exists:users,idnumber'],
-            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
-        ]);
-    
-        $user = User::where('idnumber', $request->idnumber)->first();
-    
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-    
-        $token = $user->createToken('auth_token')->plainTextToken;
-    
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'usertype' => $user->usertype,
-        ]);
+{
+    $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string', 'min:8'],
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'user' => $user,
+        'token' => $token,
+        'usertype' => $user->usertype,
+    ]);
+}
     public function userprofile()
     {
         // Get the authenticated user
