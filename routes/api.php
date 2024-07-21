@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
+Route::get('/users', [UserController::class, 'index']);  ////ito ung linkk 
 Route::post('register',[UserController::class,'register']);
 Route::post('login', [UserController::class, 'login']);
 Route::put('/user/{id}', [UserController::class, 'edit']);

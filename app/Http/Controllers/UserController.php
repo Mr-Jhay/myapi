@@ -15,6 +15,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserController extends Controller
 
 {
+    //////////showwww this galing database
+    public function index()
+    {
+        return User::all();
+    }
 
     public function register(Request $request)
     {
