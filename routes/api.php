@@ -9,6 +9,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index']);  ////ito ung linkk 
+Route::get('/users/students', [UserController::class, 'getStudentUsers']); ///students
+Route::get('/user-counts', [UserController::class, 'getUsersCounts']); /// user counts male and female
 Route::post('register',[UserController::class,'register']);
 Route::post('login', [UserController::class, 'login']);
 Route::put('/user/{id}', [UserController::class, 'edit']);

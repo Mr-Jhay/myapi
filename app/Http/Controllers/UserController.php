@@ -15,12 +15,33 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserController extends Controller
 
 {
-    //////////showwww this galing database
+    //////////showwww this all user galing database
     public function index()
     {
         return User::all();
     }
+    //////////showwww this all students galing database
+    public function getStudentUsers()
+    {
+        try {
+            $students = User::where('usertype', 'student')->get();
+            return response()->json($students, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch student users'], 500);
+        }
+    }
+    public function getUsersCounts()
+    {
+        // Count the number of male and female users
+        $femaleCount = User::where('sex', 'female')->count();
+        $maleCount = User::where('sex', 'male')->count();
 
+        // Return the counts as a JSON response
+        return response()->json([
+            'femaleStudents' => $femaleCount,
+            'maleStudents' => $maleCount,
+        ]);
+    }
     public function register(Request $request)
     {
         // Validate the incoming request data
