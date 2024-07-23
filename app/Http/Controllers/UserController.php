@@ -30,6 +30,15 @@ class UserController extends Controller
             return response()->json(['error' => 'Failed to fetch student users'], 500);
         }
     }
+    public function getTeachersUsers()
+    {
+        try {
+            $teacher = User::where('usertype', 'teacher')->get();
+            return response()->json($teacher, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch student users'], 500);
+        }
+    }
     public function getUsersCounts()
     {
         // Count the number of male and female users
