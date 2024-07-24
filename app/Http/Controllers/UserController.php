@@ -41,14 +41,18 @@ class UserController extends Controller
     }
     public function getUsersCounts()
     {
-        // Count the number of male and female users
+        // Count the number of male and female users as well as teacher and student
         $femaleCount = User::where('sex', 'female')->count();
         $maleCount = User::where('sex', 'male')->count();
+        $teacherCount = User::where('usertype', 'teacher')->count();
+        $studentCount = User::where('usertype', 'student')->count();
 
         // Return the counts as a JSON response
         return response()->json([
-            'femaleStudents' => $femaleCount,
-            'maleStudents' => $maleCount,
+            'femaleUsers' => $femaleCount,
+            'maleUsers' => $maleCount,
+            'teacher' => $teacherCount,
+            'student' => $studentCount
         ]);
     }
     public function register(Request $request)
