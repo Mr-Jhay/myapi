@@ -174,7 +174,8 @@ class UserController extends Controller
     {
         // Validate the incoming request data
         $data = $request->validate([
-            'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            // 'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            'idnumber' => ['nullable', 'integer', 'unique:users,idnumber,' . $id],
             'fname' => ['string'],
             'mname' => ['string'],
             'lname' => ['string'],
