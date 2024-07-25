@@ -15,7 +15,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserController extends Controller
 
 {
-
     //////////showwww this all user galing database
     public function index()
     {
