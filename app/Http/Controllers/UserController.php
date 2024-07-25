@@ -7,54 +7,108 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-//use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Resources\Json\JsonResource;
-//namespace App\Http\Resources;
-//namespace App\Models;
-//use Illuminate\Http\Request;
-//use Illuminate\Http\Resources\Json\JsonResource;
+
 
 
 class UserController extends Controller
 
 {
 
+    //////////showwww this all user galing database
+    public function index()
+    {
+        return User::all();
+    }
+    //////////showwww this all students galing database
+    public function getStudentUsers()
+    {
+        try {
+            $students = User::where('usertype', 'student')->get();
+            return response()->json($students, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch student users'], 500);
+        }
+    }
+    public function getTeachersUsers()
+    {
+        try {
+            $teacher = User::where('usertype', 'teacher')->get();
+            return response()->json($teacher, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch student users'], 500);
+        }
+    }
+    public function getUsersCounts()
+    {
+        // Count the number of male and female users as well as teacher and student
+        $femaleCount = User::where('sex', 'female')->count();
+        $maleCount = User::where('sex', 'male')->count();
+        $teacherCount = User::where('usertype', 'teacher')->count();
+        $studentCount = User::where('usertype', 'student')->count();
+
+        // Return the counts as a JSON response
+        return response()->json([
+            'femaleUsers' => $femaleCount,
+            'maleUsers' => $maleCount,
+            'teacher' => $teacherCount,
+            'student' => $studentCount
+        ]);
+    }
     public function register(Request $request)
     {
+        // Validate the incoming request data
         $data = $request->validate([
-
-            
             'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
-            'fname'=> ['required', 'string'],
-            'mname'=> ['required', 'string'],
-            'lname'=> ['required', 'string'],
-            'sex'=> ['required', 'string'],
-            'usertype'=> ['required', 'string'],
-            'email'=> ['required', 'email','unique:users'],
-            'Mobile_no'=> ['required', 'integer', 'min:10','unique:users,Mobile_no'],
-            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
-
+            'fname' => ['required', 'string'],
+            'mname' => ['required', 'string'],
+            'lname' => ['required', 'string'],
+            'sex' => ['required', 'string'],
+            'usertype' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'Mobile_no' => ['required', 'digits:10', 'unique:users,Mobile_no'],
+            'password' => [
+                'required', 
+                'string', 
+                'min:8', 
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
         ]);
     
-        $user = User::create([
-            'idnumber' => $data['idnumber'],
-            'fname' => $data['fname'],
-            'mname' => $data['mname'],
-            'lname' => $data['lname'],
-            'sex' => $data['sex'],
-            'usertype' => $data['usertype'],
-            'email' => $data['email'],
-            'Mobile_no' => $data['Mobile_no'],
-            'password' => bcrypt($data['password']),
-        ]);
+        try {
+            // Create the user
+            $user = User::create([
+                'idnumber' => $data['idnumber'],
+                'fname' => $data['fname'],
+                'mname' => $data['mname'],
+                'lname' => $data['lname'],
+                'sex' => $data['sex'],
+                'usertype' => $data['usertype'],
+                'email' => $data['email'],
+                'Mobile_no' => $data['Mobile_no'],
+                'password' => Hash::make($data['password']),
+            ]);
     
-        $token = $user->createToken('auth_token')->plainTextToken;
+            // Generate the token
+            $token = $user->createToken('auth_token')->plainTextToken;
     
-        return [
-            'user' => $user,
-            'token' => $token,
-        ];
+            // Return the user and token
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+            ], 201);
+    
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Registration failed: ' . $e->getMessage());
+    
+            // Return a response with error details
+            return response()->json([
+                'message' => 'Registration failed',
+                'error' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
+        }
     }
 
     public function login(Request $request)
@@ -125,7 +179,8 @@ class UserController extends Controller
     {
         // Validate the incoming request data
         $data = $request->validate([
-            'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            // 'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            'idnumber' => ['nullable', 'integer', 'unique:users,idnumber,' . $id],
             'fname' => ['string'],
             'mname' => ['string'],
             'lname' => ['string'],

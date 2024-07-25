@@ -24,6 +24,8 @@ class UserResource extends JsonResource
             'sex' => $this->sex,
             'email' => $this->email,
             'usertype' => $this->usertype,
+            'posts'=> tblteacherResource::collection($this->tblteacher),
+            'posts2'=> tblstudentResource::collection($this->tblstudent),
            // 'Mobile_no' => $this->Mobile_no,
             'created_at' => $this->created_at,
            // 'updated_at' => $this->updated_at,

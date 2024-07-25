@@ -36,6 +36,11 @@ class User extends Authenticatable
         
     ];
 
+
+
+    public function teacher_post(){
+        return $this->hasMany(tblteacher::class,'user_id','id')->orderBy('id');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
