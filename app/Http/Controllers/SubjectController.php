@@ -13,9 +13,9 @@ class SubjectController extends Controller
     {
         // Validate the incoming request data
         $request->validate([
-            'teacher_id' => 'required|integer',
+            'teacher_id' => 'required|exists:tblteacher,id|unique:tblsubject,teacher_id',
             'subjectname' => 'required|string|max:255',
-            'yearlevel' => 'required|integer',
+            'yearlevel' => 'required|string',
             'strand' => 'required|string|max:255',
             'semester' => 'required|string|max:255',
             'gen_code' => 'required|string|max:255',

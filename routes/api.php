@@ -36,7 +36,7 @@ Route::group([
   Route::get('userresource',[UserController::class,'userresource']);
   Route::post('store',[TeacherController::class,'store']);
   Route::post('store2',[StudentController::class,'store2']);
-  Route::post('store3',[SubjectController::class,'store2']);
+  Route::post('store3',[SubjectController::class,'store3']);
 
 
 });

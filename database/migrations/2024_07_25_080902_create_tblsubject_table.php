@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('yearlevel');
             $table->string('strand');
             $table->string('semester');
-            $table->integer('gen_code'); // Changed from string to integer
+            $table->string('gen_code'); // Changed from string to integer
             $table->string('up_img')->nullable(); // Added nullable for optional image field
             $table->timestamps();
 
