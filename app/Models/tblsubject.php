@@ -12,7 +12,7 @@ class tblsubject extends Model
     use HasFactory, Notifiable, HasApiTokens;
     protected $table = 'tblsubject';
 
-    protected $fillable = [
+     protected $fillable = [
            'teacher_id',
            'subjectname',
            'yearlevel',
