@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\tblstudent; // Assuming your model is named Student
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\UserController;
 
 class StudentController extends Controller
 {
@@ -30,5 +32,16 @@ class StudentController extends Controller
         ]);
 
         return response()->json($student, 201);
+    }
+
+    public function index2()
+    {
+        $results = DB::table('users')
+            ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
+            ->select('users.*','tblstudent.user_id', 'tblstudent.strand' , 'tblstudent.strand', 'tblstudent.gradelevel')
+            ->get();
+
+        // Return JSON response for API testing
+        return response()->json($results);
     }
 }

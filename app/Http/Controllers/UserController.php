@@ -59,14 +59,14 @@ class UserController extends Controller
     {
         // Validate the incoming request data
         $data = $request->validate([
-            'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            'idnumber' => ['required', 'string','min:8', 'max:12' ,'unique:users,idnumber'],
             'fname' => ['required', 'string'],
             'mname' => ['required', 'string'],
             'lname' => ['required', 'string'],
             'sex' => ['required', 'string'],
             'usertype' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'Mobile_no' => ['required', 'digits:10', 'unique:users,Mobile_no'],
+            'Mobile_no' => ['required','string', 'digits:11', 'unique:users,Mobile_no'],
             'password' => [
                 'required', 
                 'string', 
