@@ -1,8 +1,8 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -16,12 +16,8 @@ Route::get('/users/students', [UserController::class, 'getStudentUsers']); ///st
 Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']); ///Teachers
 Route::get('/user-counts', [UserController::class, 'getUsersCounts']); /// user counts male and female
 Route::post('register',[UserController::class,'register']);
-
 Route::post('login', [UserController::class, 'login']);
 Route::put('/user/{id}', [UserController::class, 'edit']);
-//Route::get('/userResource',[UserController::class,'userResource']);
-
-
 
 Route::group([
     "middleware" => "auth:sanctum"
@@ -39,5 +35,9 @@ Route::group([
   Route::post('store2',[StudentController::class,'store2']);
   Route::post('store3',[SubjectController::class,'store3']);
   Route::get('index',[TeacherController::class,'index']);
+  Route::get('index2',[StudentController::class,'index2']);
+  Route::put('users/{id}',[TeacherController::class,'update']);
+  Route::put('users/{id}',[StudentController::class,'update']);
+  
 
 });

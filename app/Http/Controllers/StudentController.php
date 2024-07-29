@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\tblstudent; // Assuming your model is named Student
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\UserController;
 
 class StudentController extends Controller
 {
@@ -31,4 +33,84 @@ class StudentController extends Controller
 
         return response()->json($student, 201);
     }
+
+    public function index2()
+    {
+        $results = DB::table('users')
+            ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
+            ->select('users.*','tblstudent.user_id', 'tblstudent.strand' , 'tblstudent.strand', 'tblstudent.gradelevel')
+            ->get();
+
+        // Return JSON response for API testing
+        return response()->json($results);
+    }
+    
+    // UPDATE PROFILE
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'idnumber' => [
+                'sometimes', 'string', 'min:8', 'max:12',
+                Rule::unique('users', 'idnumber')->ignore($id),
+            ],
+            'fname' => 'sometimes|string',
+            'mname' => 'sometimes|string',
+            'lname' => 'sometimes|string',
+            'sex' => 'sometimes|string',
+            'usertype' => 'sometimes|string',
+            'email' => [
+                'sometimes', 'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'Mobile_no' => [
+                'sometimes', 'string', 'digits:11',
+                Rule::unique('users', 'Mobile_no')->ignore($id),
+            ],
+            'password' => [
+                'sometimes', 'string', 'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+            'strand' => 'sometimes|string|max:255',
+            'gradelevel' => 'sometimes|string|max:255',
+        ]);
+
+        $data = $request->only([
+            'idnumber', 'fname', 'mname', 'lname', 'sex', 'usertype', 'email', 'Mobile_no', 'password'
+        ]);
+
+        // Update the user record
+        DB::table('users')
+            ->where('id', $id)
+            ->update([
+                'idnumber' => $data['idnumber'],
+                'fname' => $data['fname'],
+                'mname' => $data['mname'],
+                'lname' => $data['lname'],
+                'sex' => $data['sex'],
+                'usertype' => $data['usertype'],
+                'email' => $data['email'],
+                'Mobile_no' => $data['Mobile_no'],
+                'password' => Hash::make($data['password']),
+                'updated_at' => now(),
+            ]);
+
+        // Update the student record
+        DB::table('tblstudent')
+            ->where('user_id', $id)
+            ->update([
+                'strand' => $request->input('strand'),
+                'gradelevel' => $request->input('gradelevel'),
+                'updated_at' => now(),
+            ]);
+
+        // Assuming you want to create a new token for the updated user
+        $user = User::find($id);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Record updated successfully.',
+            'token' => $token
+        ]);
+    }
+
 }
