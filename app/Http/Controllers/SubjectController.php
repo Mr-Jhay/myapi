@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\tblsubject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SubjectController extends Controller
 {
@@ -20,8 +21,18 @@ class SubjectController extends Controller
 
         $teacherId = Auth::user()->id;
 
+        // Verify that the teacher_id exists in the tblteacher table
+        $teacherExists = DB::table('tblteacher')->where('user_id', $teacherId)->exists();
+
+        if (!$teacherExists) {
+            return response()->json(['message' => 'Teacher not found.'], 404);
+        }
+
+        // Get the actual teacher ID from the tblteacher table
+        $teacher = DB::table('tblteacher')->where('user_id', $teacherId)->first();
+
         $subject = tblsubject::create([
-            'teacher_id' => $teacherId,
+            'teacher_id' => $teacher->id,
             'subjectname' => $request->input('subjectname'),
             'yearlevel' => $request->input('yearlevel'),
             'strand' => $request->input('strand'),
@@ -37,7 +48,12 @@ class SubjectController extends Controller
 
     public function index()
     {
-        $subjects = tblsubject::where('teacher_id', Auth::user()->id)->get();
+        $teacherId = Auth::user()->id;
+
+        // Get the actual teacher ID from the tblteacher table
+        $teacher = DB::table('tblteacher')->where('user_id', $teacherId)->first();
+
+        $subjects = tblsubject::where('teacher_id', $teacher->id)->get();
 
         return response()->json([
             'data' => $subjects
