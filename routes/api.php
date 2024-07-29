@@ -36,5 +36,8 @@ Route::group([
   Route::post('store3',[SubjectController::class,'store3']);
   Route::get('index',[TeacherController::class,'index']);
   Route::get('index2',[StudentController::class,'index2']);
+  Route::put('users/{id}',[TeacherController::class,'update']);
+  Route::put('users/{id}',[StudentController::class,'update']);
+  
 
 });

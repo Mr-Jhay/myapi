@@ -81,11 +81,25 @@ class SubjectController extends Controller
 
     public function destroy($id)
     {
-        $subject = tblsubject::findOrFail($id);
+        $teacherId = Auth::user()->id;
+    
+        // Verify that the teacher_id exists in the tblteacher table
+        $teacher = DB::table('tblteacher')->where('user_id', $teacherId)->first();
+    
+        if (!$teacher) {
+            return response()->json(['message' => 'Teacher not found.'], 404);
+        }
+    
+        $subject = tblsubject::where('id', $id)->where('teacher_id', $teacher->id)->first();
+    
+        if (!$subject) {
+            return response()->json(['message' => 'Subject not found.'], 404);
+        }
+    
         $subject->delete();
-
+    
         return response()->json([
-            'message' => 'Subject deleted successfully'
+            'message' => 'Subject deleted successfully',
         ]);
     }
 }
