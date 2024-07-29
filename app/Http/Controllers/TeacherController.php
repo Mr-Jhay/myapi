@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\tblteacher;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
 class TeacherController extends Controller
@@ -31,10 +31,7 @@ class TeacherController extends Controller
 
         return response()->json($teacher, 201);
     }
-   
 
-
-    //join
     public function index()
     {
         $results = DB::table('users')
@@ -42,20 +39,17 @@ class TeacherController extends Controller
             ->select('users.*', 'tblteacher.teacher_Position')
             ->get();
 
-        // Return JSON response for API testing
         return response()->json($results);
     }
 
     public function update(Request $request, $id)
     {
-        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'teacher_Position' => 'required|string|max:255',
         ]);
 
-        // Update the users table
         DB::table('users')
             ->where('id', $id)
             ->update([
@@ -64,7 +58,6 @@ class TeacherController extends Controller
                 'updated_at' => now(),
             ]);
 
-        // Update the tblteacher table
         DB::table('tblteacher')
             ->where('user_id', $id)
             ->update([
@@ -75,17 +68,14 @@ class TeacherController extends Controller
         return response()->json(['message' => 'Record updated successfully.']);
     }
 
-
     public function insert(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'teacher_Position' => 'required|string|max:255',
         ]);
 
-        // Insert data into the users table
         $userId = DB::table('users')->insertGetId([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -93,7 +83,6 @@ class TeacherController extends Controller
             'updated_at' => now(),
         ]);
 
-        // Insert data into the tblteacher table
         DB::table('tblteacher')->insert([
             'user_id' => $userId,
             'teacher_Position' => $request->input('teacher_Position'),
@@ -106,19 +95,14 @@ class TeacherController extends Controller
 
     public function softDelete($id)
     {
-        // Soft delete the user
         DB::table('users')
             ->where('id', $id)
             ->update(['deleted_at' => now()]);
 
-        // Soft delete the teacher
         DB::table('tblteacher')
             ->where('user_id', $id)
             ->update(['deleted_at' => now()]);
 
         return response()->json(['message' => 'Record soft deleted successfully.']);
     }
-
-    
 }
-
