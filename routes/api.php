@@ -16,6 +16,7 @@ Route::get('/users/students', [UserController::class, 'getStudentUsers']); ///st
 Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']); ///Teachers
 Route::get('/user-counts', [UserController::class, 'getUsersCounts']); /// user counts male and female
 Route::post('register',[UserController::class,'register']);
+
 Route::post('login', [UserController::class, 'login']);
 Route::put('/user/{id}', [UserController::class, 'edit']);
 //Route::get('/userResource',[UserController::class,'userResource']);
