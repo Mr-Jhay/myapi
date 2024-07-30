@@ -6,6 +6,8 @@ use App\Models\tblstudent; // Assuming your model is named Student
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule; 
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\UserController;
 
 class StudentController extends Controller
@@ -36,14 +38,26 @@ class StudentController extends Controller
 
     public function index2()
     {
+        // Fetch data
         $results = DB::table('users')
             ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
-            ->select('users.*','tblstudent.user_id', 'tblstudent.strand' , 'tblstudent.strand', 'tblstudent.gradelevel')
+            ->select('users.*', 'tblstudent.user_id', 'tblstudent.strand', 'tblstudent.gradelevel')
             ->get();
-
-        // Return JSON response for API testing
-        return response()->json($results);
+    
+        // Define the timezone offset (e.g., +8 hours for Asia/Manila)
+        $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+    
+        // Convert timestamps
+        foreach ($results as $result) {
+            // Convert created_at and updated_at to the desired timezone
+            $result->created_at = date('Y-m-d H:i:s', strtotime($result->created_at) + $timezoneOffset);
+            $result->updated_at = date('Y-m-d H:i:s', strtotime($result->updated_at) + $timezoneOffset);
+        }
+    
+        // Return JSON response
+        return response()->json($results, 200);
     }
+    
     
     // UPDATE PROFILE
     public function update(Request $request, $id)
