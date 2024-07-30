@@ -6,6 +6,8 @@ use App\Models\tblstudent; // Assuming your model is named Student
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule; 
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\UserController;
 
 class StudentController extends Controller
@@ -55,6 +57,7 @@ class StudentController extends Controller
         // Return JSON response
         return response()->json($results, 200);
     }
+    
     
     // UPDATE PROFILE
     public function update(Request $request, $id)
