@@ -9,8 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Resources\Json\JsonResource;
-
-
+use Illuminate\Support\Facades\DB;
+use App\Models\tblstudent;
+use App\Models\tblteacher;
 
 class UserController extends Controller
 
@@ -133,23 +134,55 @@ class UserController extends Controller
 }
     public function userprofile()
     {
-        // Get the authenticated user
-        $user = auth()->user();
-    
-        // Check if the user is authenticated
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'User not authenticated',
-            ], 401);
-        }
-    
-        // Return the user profile data
+              // Get the authenticated user
+    $user = auth()->user();
+
+    // Check if the user is authenticated
+    if (!$user) {
         return response()->json([
-            'status' => true,
-            'message' => 'User Login Profile',
-            'data' => $user,
-        ], 200);
+            'status' => false,
+            'message' => 'User not authenticated',
+        ], 401);
+    }
+
+    // Define the timezone offset (e.g., +8 hours for Asia/Manila)
+    $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+
+    // Initialize the response data
+    $responseData = null;
+
+    // Check user role and fetch appropriate data
+    if ($user->usertype == 'student') {
+        // Fetch student data
+        $responseData = DB::table('users')
+            ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
+            ->select('users.*', 'tblstudent.strand', 'tblstudent.gradelevel')
+            ->where('users.id', $user->id)
+            ->first();
+    } elseif ($user->usertype == 'teacher') {
+        // Fetch teacher data
+        $responseData = DB::table('users')
+            ->join('tblteacher', 'users.id', '=', 'tblteacher.user_id')
+            ->select('users.*', 'tblteacher.teacher_Position')
+            ->where('users.id', $user->id)
+            ->first();
+    } elseif ($user->usertype == 'admin') {
+        // For admin, just return the user data
+        $responseData = $user;
+    }
+
+    // Convert timestamps for response data
+    if ($responseData) {
+        $responseData->created_at = date('Y-m-d H:i:s', strtotime($responseData->created_at) + $timezoneOffset);
+        $responseData->updated_at = date('Y-m-d H:i:s', strtotime($responseData->updated_at) + $timezoneOffset);
+    }
+
+    // Return the user profile data
+    return response()->json([
+        'status' => true,
+        'message' => 'User Profile Data',
+        'data' => $responseData,
+    ], 200);
     }
 
     public function logout()
