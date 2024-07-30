@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\AddsubjectController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,6 +40,8 @@ Route::group([
 
   Route::put('users/{id}',[TeacherController::class,'update']);
   Route::put('users/{id}',[StudentController::class,'update']);
+  Route::post('store4',[AddsubjectController::class,'store4']);
+  Route::get('index4',[AddsubjectController::class,'index4']);
   
 
 });
