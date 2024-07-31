@@ -127,4 +127,42 @@ class StudentController extends Controller
         ]);
     }
 
+    // Count strands
+    public function countStrandStudents()
+    {
+        // Count students in HUMMS 
+        $countHumms11 = tblstudent::where('strand', 'HUMMS')->where('gradelevel', 'GRADE 11')->count();
+        $countHumms12 = tblstudent::where('strand', 'HUMMS')->where('gradelevel', 'GRADE 12')->count();
+        $countStem11 = tblstudent::where('strand', 'STEM')->where('gradelevel', 'GRADE 11')->count();
+        $countStem12 = tblstudent::where('strand', 'STEM')->where('gradelevel', 'GRADE 12')->count();
+        $countAbm11 = tblstudent::where('strand', 'ABM')->where('gradelevel', 'GRADE 11')->count();
+        $countAbm12 = tblstudent::where('strand', 'ABM')->where('gradelevel', 'GRADE 12')->count();
+        $countTVL11 = tblstudent::where('strand', 'TVL-ICT')->where('gradelevel', 'GRADE 11')->count();
+        $countTVL12 = tblstudent::where('strand', 'TVL-ICT')->where('gradelevel', 'GRADE 12')->count();
+        // Total count
+        $totalHumms = $countHumms11 + $countHumms12;
+        $totalStem = $countStem11 + $countStem12;
+        $totalAbm = $countAbm11 + $countAbm12;
+        $totalTVL = $countTVL11 + $countTVL12;
+
+        // Return response with counts
+        return response()->json([
+            'HUMMS_11_count' => $countHumms11,
+            'HUMMS_12_count' => $countHumms12,
+            'total_humms' => $totalHumms,
+
+            'STEM_11_count' => $countStem11,
+            'STEM_12_count' => $countStem12,
+            'total_stem' => $totalStem,
+
+            'ABM_11_count' => $countAbm11,
+            'ABM_12_count' => $countAbm12,
+            'total_abm' => $totalAbm,
+
+            'TVL-ICT_11_count' => $countTVL11,
+            'TVL-ICT 12_count' => $countTVL12,
+            'total_tvl' => $totalTVL,
+        ], 200);
+    }
+
 }
