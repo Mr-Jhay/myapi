@@ -39,6 +39,15 @@ class TeacherController extends Controller
             ->select('users.*', 'tblteacher.teacher_Position')
             ->get();
 
+        // Define the timezone offset (e.g., +8 hours for Asia/Manila)
+        $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+    
+        // Convert timestamps
+        foreach ($results as $result) {
+            // Convert created_at and updated_at to the desired timezone
+            $result->created_at = date('Y-m-d H:i:s', strtotime($result->created_at) + $timezoneOffset);
+            $result->updated_at = date('Y-m-d H:i:s', strtotime($result->updated_at) + $timezoneOffset);
+        }
         return response()->json($results);
     }
 
