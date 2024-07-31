@@ -32,10 +32,11 @@ Route::group([
   //  Route::post('logout', 'AuthController@logout');
   Route::get('userResourceCollection',[UserController::class,'userResourceCollection']);
   Route::get('userresource',[UserController::class,'userresource']);
-  Route::post('store',[TeacherController::class,'store']);
-  Route::post('store2',[StudentController::class,'store2']);
+  Route::post('store',[TeacherController::class,'store']); /// add position by teacher 
+  Route::post('store2',[StudentController::class,'store2']); //// add strand by student 
+  Route::get('/countstrand', [StudentController::class, 'countStrandStudents']);
   Route::post('store3',[SubjectController::class,'store3']);
-  Route::get('index',[TeacherController::class,'index']);
+  Route::get('index',[TeacherController::class,'index']); //show teacher user
   Route::get('index2', [StudentController::class, 'index2']); ///show student users 
 
   Route::put('users/{id}',[TeacherController::class,'update']);
