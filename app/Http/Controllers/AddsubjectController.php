@@ -28,7 +28,7 @@ class AddsubjectController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-    
+     
             return redirect()->back()->with('success', 'Student added successfully.');
         } else {
             // Return an error message if gen_code does not match
