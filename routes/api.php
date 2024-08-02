@@ -35,13 +35,15 @@ Route::group([
   Route::post('store',[TeacherController::class,'store']); /// add position by teacher 
   Route::post('store2',[StudentController::class,'store2']); //// add strand by student 
   Route::get('/countstrand', [StudentController::class, 'countStrandStudents']);
-  Route::post('store3',[SubjectController::class,'store3']);
+
+
+  Route::post('store3',[SubjectController::class,'store3']); //teacher add subject 
   Route::get('index',[TeacherController::class,'index']); //show teacher user
   Route::get('index2', [StudentController::class, 'index2']); ///show student users 
 
   Route::put('users/{id}',[TeacherController::class,'update']);
   Route::put('users/{id}',[StudentController::class,'update']);
-  Route::post('store4',[AddsubjectController::class,'store4']);
+  Route::post('store4',[AddsubjectController::class,'store4']);/// student add subject /enroll
   Route::get('index4',[AddsubjectController::class,'index4']);
   
 
