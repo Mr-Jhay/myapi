@@ -56,10 +56,19 @@ class AddsubjectController extends Controller
         $addstudents = DB::table('addstudent')
         ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
         ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
-        ->join('users', 'tblstudent.user_id', '=', 'users.id') // Assuming `tblstudent` has a `user_id` foreign key for joining with `users`
-        ->select('addstudent.*', 'tblsubject.subjectname as subject_name', 'tblstudent.fname as student_name', 'users.email as student_email') // Select relevant columns
+        ->join('users', 'tblstudent.user_id', '=', 'users.id') // Join with users table using foreign key from tblstudent
+        ->select(
+            'addstudent.*', 
+             'users.fname as student_fname',
+             'users.mname as student_mname',
+             'users.lname as student_lname',
+            'tblsubject.subjectname as subject_name', 
+            'tblstudent.strand as student_strand'
+            
+            
+        ) // Select relevant columns with aliases
         ->get();
-
-        return view('addsubject.index', compact('addstudents'));
+    
+        return response()->json($addstudents);
     }
 }
