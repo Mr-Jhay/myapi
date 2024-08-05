@@ -45,6 +45,7 @@ Route::group([
   Route::put('users/{id}',[StudentController::class,'update']);
   Route::post('store4',[AddsubjectController::class,'store4']);/// student add subject /enroll
   Route::get('index4',[AddsubjectController::class,'index4']);
+  Route::get('newshow',[AddsubjectController::class,'newshow']);//show ng lahat ng naka enroll
   
 
 });

@@ -50,7 +50,7 @@ class AddsubjectController extends Controller
     return response()->json(['success' => 'Student added successfully.'], 200);
 }
     
-
+    
     public function index4()
     {
         $addstudents = DB::table('addstudent')
@@ -71,4 +71,24 @@ class AddsubjectController extends Controller
     
         return response()->json($addstudents);
     }
+
+    public function newshow()
+{
+    $enrolledStudents = DB::table('addstudent')
+        ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
+        ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
+        ->join('users', 'tblstudent.user_id', '=', 'users.id')
+        ->select(
+            'addstudent.*', 
+            'users.fname as student_fname',
+            'users.mname as student_mname',
+            'users.lname as student_lname',
+            'tblsubject.subjectname as subject_name', 
+            'tblstudent.strand as student_strand'
+        )
+        ->whereNotNull('addstudent.subject_id') // Ensure students have enrolled in a subject
+        ->get();
+
+    return response()->json($enrolledStudents);
+}
 }
