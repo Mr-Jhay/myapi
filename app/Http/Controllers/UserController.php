@@ -9,8 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Resources\Json\JsonResource;
-
-
+use Illuminate\Support\Facades\DB;
+use App\Models\tblstudent;
+use App\Models\tblteacher;
 
 class UserController extends Controller
 
@@ -59,18 +60,18 @@ class UserController extends Controller
     {
         // Validate the incoming request data
         $data = $request->validate([
-            'idnumber' => ['required', 'integer', 'unique:users,idnumber'],
+            'idnumber' => ['required', 'string', 'min:8', 'max:12', 'unique:users,idnumber'],
             'fname' => ['required', 'string'],
             'mname' => ['required', 'string'],
             'lname' => ['required', 'string'],
             'sex' => ['required', 'string'],
             'usertype' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'Mobile_no' => ['required', 'digits:10', 'unique:users,Mobile_no'],
+            'Mobile_no' => ['nullable', 'string', 'digits:11', 'unique:users,Mobile_no'],
             'password' => [
-                'required', 
-                'string', 
-                'min:8', 
+                'required',
+                'string',
+                'min:8',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ]);
@@ -85,7 +86,7 @@ class UserController extends Controller
                 'sex' => $data['sex'],
                 'usertype' => $data['usertype'],
                 'email' => $data['email'],
-                'Mobile_no' => $data['Mobile_no'],
+                'Mobile_no' => $data['Mobile_no'] ?? null, // Handle nullable Mobile_no
                 'password' => Hash::make($data['password']),
             ]);
     
@@ -109,6 +110,7 @@ class UserController extends Controller
             ], 500);
         }
     }
+    
 
     public function login(Request $request)
 {
@@ -133,23 +135,55 @@ class UserController extends Controller
 }
     public function userprofile()
     {
-        // Get the authenticated user
-        $user = auth()->user();
-    
-        // Check if the user is authenticated
-        if (!$user) {
+                    // Get the authenticated user
+            $user = auth()->user();
+
+            // Check if the user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not authenticated',
+                ], 401);
+            }
+
+            // Define the timezone offset (e.g., +8 hours for Asia/Manila)
+            $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+
+            // Initialize the response data
+            $responseData = null;
+
+            // Check user role and fetch appropriate data
+            if ($user->usertype == 'student') {
+                // Fetch student data
+                $responseData = DB::table('users')
+                    ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
+                    ->select('users.*', 'tblstudent.strand', 'tblstudent.gradelevel')
+                    ->where('users.id', $user->id)
+                    ->first();
+            } elseif ($user->usertype == 'teacher') {
+                // Fetch teacher data
+                $responseData = DB::table('users')
+                    ->join('tblteacher', 'users.id', '=', 'tblteacher.user_id')
+                    ->select('users.*', 'tblteacher.teacher_Position')
+                    ->where('users.id', $user->id)
+                    ->first();
+            } elseif ($user->usertype == 'admin') {
+                // For admin, just return the user data
+                $responseData = $user;
+            }
+
+            // Convert timestamps for response data
+            if ($responseData) {
+                $responseData->created_at = date('Y-m-d H:i:s', strtotime($responseData->created_at) + $timezoneOffset);
+                $responseData->updated_at = date('Y-m-d H:i:s', strtotime($responseData->updated_at) + $timezoneOffset);
+            }
+
+            // Return the user profile data
             return response()->json([
-                'status' => false,
-                'message' => 'User not authenticated',
-            ], 401);
-        }
-    
-        // Return the user profile data
-        return response()->json([
-            'status' => true,
-            'message' => 'User Login Profile',
-            'data' => $user,
-        ], 200);
+                'status' => true,
+                'message' => 'User Profile Data',
+                'data' => $responseData,
+            ], 200);
     }
 
     public function logout()
@@ -263,4 +297,51 @@ class UserController extends Controller
             //'id'=>''
         ], 200);
     }
+
+
+
+    public function changePassword(Request $request)
+    {
+        // Get the authenticated user
+        $user = auth()->user();
+
+        // Check if the user is authenticated
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not authenticated',
+            ], 401);
+        }
+
+        // Validate the request data
+        $request->validate([
+            'current_password' => 'required',
+            //'new_password' => 'required|min:8|confirmed',
+            'new_password' => [
+                'required', 
+                'string', 
+                'min:8', 
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+        ]);
+
+        // Check if the current password matches
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Current password is incorrect',
+            ], 400);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Return a success response
+        return response()->json([
+            'status' => true,
+            'message' => 'Password changed successfully',
+        ], 200);
+    }
+
 }

@@ -2,26 +2,22 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class tblsubject extends Model
+
+class addstudent extends Model
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
-    protected $table = 'tblsubject';
+    protected $table = 'addstudent';
+    protected $fillable = [
+        'subject_id',
+        'student_id',
 
-     protected $fillable = [
-           'teacher_id',
-           'subjectname',
-           'yearlevel',
-           'strand',
-           'semester',
-           'gen_code',
-           'up_img',
-           
-       ];
+        
+    ];
 }
-

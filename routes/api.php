@@ -7,17 +7,18 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\AddsubjectController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
 Route::post('/generate-report', [ReportController::class, 'generateReport']);
-Route::get('/users', [UserController::class, 'index']);
-Route::get('/users/students', [UserController::class, 'getStudentUsers']);
-Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']);
-Route::get('/user-counts', [UserController::class, 'getUsersCounts']);
-Route::post('register', [UserController::class, 'register']);
+Route::get('/users', [UserController::class, 'index']);  ////ito ung linkk 
+Route::get('/users/students', [UserController::class, 'getStudentUsers']); ///students
+Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']); ///Teachers
+Route::get('/user-counts', [UserController::class, 'getUsersCounts']); /// user counts male and female
+Route::post('register',[UserController::class,'register']);
 Route::post('login', [UserController::class, 'login']);
 Route::put('/user/{id}', [UserController::class, 'edit']);
 
@@ -35,7 +36,4 @@ Route::group([
     Route::get('subjects', [SubjectController::class, 'index']);
     Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
     Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
-    
-
-   
 });
