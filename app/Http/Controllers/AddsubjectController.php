@@ -9,46 +9,53 @@ use Illuminate\Support\Facades\DB;
 class AddsubjectController extends Controller
 {
     public function store4(Request $request)
-{
-    // Validate the incoming request data
-    $request->validate([
-        'subject_id' => 'required|exists:tblsubject,id',
-        'student_id' => 'required|exists:tblstudent,id',
-        'gen_code' => 'required|string',
-    ]);
-
-    // Retrieve the subject's gen_code from the database
-    $subject = DB::table('tblsubject')->where('id', $request->input('subject_id'))->first();
-
-    // Check if the subject exists and the provided gen_code matches the one in the database
-    if (!$subject) {
-        return response()->json(['error' => 'The selected subject does not exist.'], 404);
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'gen_code' => 'required|string',
+        ]);
+    
+        // Retrieve the authenticated user
+        $user = auth()->user();
+    
+        // Retrieve the student's ID based on the authenticated user's ID
+        $student = DB::table('tblstudent')->where('user_id', $user->id)->first();
+    
+        // Check if the student exists
+        if (!$student) {
+            return response()->json(['error' => 'Student record not found for the authenticated user.'], 404);
+        }
+    
+        // Retrieve the subject based on the provided gen_code
+        $subject = DB::table('tblsubject')->where('gen_code', $request->input('gen_code'))->first();
+    
+        // Check if the subject exists
+        if (!$subject) {
+            return response()->json(['error' => 'The subject with the provided gen_code does not exist.'], 404);
+        }
+    
+        // Check if the student is already enrolled in the subject
+        $existingEnrollment = DB::table('addstudent')
+            ->where('subject_id', $subject->id)
+            ->where('student_id', $student->id)
+            ->first();
+    
+        if ($existingEnrollment) {
+            return response()->json(['error' => 'The student is already enrolled in this subject.'], 409);
+        }
+    
+        // Insert the student into the addstudent table if the student is not already enrolled
+        DB::table('addstudent')->insert([
+            'subject_id' => $subject->id,
+            'student_id' => $student->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    
+        return response()->json(['success' => 'Student added successfully.'], 200);
     }
-
-    if ($subject->gen_code !== $request->input('gen_code')) {
-        return response()->json(['error' => 'The provided gen_code is incorrect.'], 400);
-    }
-
-    // Check if the student is already enrolled in the subject
-    $existingEnrollment = DB::table('addstudent')
-        ->where('subject_id', $request->input('subject_id'))
-        ->where('student_id', $request->input('student_id'))
-        ->first();
-
-    if ($existingEnrollment) {
-        return response()->json(['error' => 'The student is already enrolled in this subject.'], 409);
-    }
-
-    // Insert the student into the addstudent table if gen_code matches and the student is not already enrolled
-    DB::table('addstudent')->insert([
-        'subject_id' => $request->input('subject_id'),
-        'student_id' => $request->input('student_id'),
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    return response()->json(['success' => 'Student added successfully.'], 200);
-}
+    
+    
     
     
     public function index4()
