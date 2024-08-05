@@ -60,18 +60,18 @@ class UserController extends Controller
     {
         // Validate the incoming request data
         $data = $request->validate([
-            'idnumber' => ['required', 'string','min:8', 'max:12' ,'unique:users,idnumber'],
+            'idnumber' => ['required', 'string', 'min:8', 'max:12', 'unique:users,idnumber'],
             'fname' => ['required', 'string'],
             'mname' => ['required', 'string'],
             'lname' => ['required', 'string'],
             'sex' => ['required', 'string'],
             'usertype' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'Mobile_no' => ['required','string', 'digits:11', 'unique:users,Mobile_no'],
+            'Mobile_no' => ['nullable', 'string', 'digits:11', 'unique:users,Mobile_no'],
             'password' => [
-                'required', 
-                'string', 
-                'min:8', 
+                'required',
+                'string',
+                'min:8',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ]);
@@ -86,7 +86,7 @@ class UserController extends Controller
                 'sex' => $data['sex'],
                 'usertype' => $data['usertype'],
                 'email' => $data['email'],
-                'Mobile_no' => $data['Mobile_no'],
+                'Mobile_no' => $data['Mobile_no'] ?? null, // Handle nullable Mobile_no
                 'password' => Hash::make($data['password']),
             ]);
     
@@ -110,6 +110,7 @@ class UserController extends Controller
             ], 500);
         }
     }
+    
 
     public function login(Request $request)
 {
