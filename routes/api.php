@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -11,6 +12,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::post('/generate-report', [ReportController::class, 'generateReport']);
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/students', [UserController::class, 'getStudentUsers']);
 Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']);
@@ -33,4 +35,7 @@ Route::group([
     Route::get('subjects', [SubjectController::class, 'index']);
     Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
     Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
+    
+
+   
 });
