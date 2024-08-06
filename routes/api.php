@@ -33,8 +33,9 @@ Route::group([
     Route::post('store2', [StudentController::class, 'store2']); ////post strand
     Route::get('index2', [StudentController::class, 'index2']); ///// show students
     Route::put('users/{id}',[TeacherController::class,'update']); //update teacher info
-    Route::put('users/{id}',[StudentController::class,'update']);//update student info
-    Route::post('store3', [SubjectController::class, 'store3']); // teacher create a subject
+    Route::put('users/{id}',[StudentController::class,'update']);//update student infos
+    Route::post('store3', [SubjectController::class, 'store3']); //teacher create subject
+    Route::get('/countstrand', [StudentController::class, 'countStrandStudents']);
     Route::get('index', [TeacherController::class, 'index']);
     Route::get('subjects', [SubjectController::class, 'index']);
     Route::post('store4', [AddsubjectController::class, 'store4']);/// students enroll to the subject 
