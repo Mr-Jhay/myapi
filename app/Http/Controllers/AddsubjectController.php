@@ -59,34 +59,40 @@ class AddsubjectController extends Controller
     
     
     public function index4(Request $request)
-    {
-        // user
-        $user = auth()->user();
+{
+    // Retrieve the authenticated user
+    $user = auth()->user();
 
-        //validate the id if match
-        $student = DB::table('tblstudent')->where('user_id', $user->id)->first();
+    // Validate if the student record exists
+    $student = DB::table('tblstudent')->where('user_id', $user->id)->first();
 
-        if (!$student) {
-            return response()->json(['error' => 'Student record not found for the authenticated user.'], 404);
-        }
-
-        $addstudents = DB::table('addstudent')
-            ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
-            ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
-            ->join('users', 'tblstudent.user_id', '=', 'users.id')
-            ->where('tblstudent.user_id', $user->id) // kukunin niya lang ung naka register sa id niya 
-            ->select(
-                'addstudent.*',
-                'users.fname as student_fname',
-                'users.mname as student_mname',
-                'users.lname as student_lname',
-                'tblsubject.subjectname as subject_name',
-                'tblstudent.strand as student_strand'
-            )
-            ->get();
-
-        return response()->json($addstudents);
+    if (!$student) {
+        return response()->json(['error' => 'Student record not found for the authenticated user.'], 404);
     }
+
+    $addstudents = DB::table('addstudent')
+        ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
+        ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
+        ->join('users as student_users', 'tblstudent.user_id', '=', 'student_users.id') // Alias for student user info
+        ->join('tblteacher', 'tblsubject.teacher_id', '=', 'tblteacher.id')
+        ->join('users as teacher_users', 'tblteacher.user_id', '=', 'teacher_users.id') // Alias for teacher user info
+        ->where('tblstudent.user_id', $user->id) 
+        ->select(
+            'addstudent.*',
+            'student_users.fname as student_fname',
+            'student_users.mname as student_mname',
+            'student_users.lname as student_lname',
+            'tblsubject.subjectname as subject_name',
+            'tblstudent.strand as student_strand',
+            'teacher_users.fname as teacher_fname', // Teacher's first name
+            'teacher_users.mname as teacher_mname', // Teacher's middle name
+            'teacher_users.lname as teacher_lname'  // Teacher's last name
+        )
+        ->get();
+
+    return response()->json($addstudents);
+}
+
     public function newshow()
 {
     $enrolledStudents = DB::table('addstudent')
