@@ -34,6 +34,10 @@ Route::group([
     Route::post('store3', [SubjectController::class, 'store3']);
     Route::get('index', [TeacherController::class, 'index']);
     Route::get('subjects', [SubjectController::class, 'index']);
+    Route::post('store4', [AddsubjectController::class, 'store4']);
+    Route::get('index4', [AddsubjectController::class, 'index4']);
+    Route::get('newshow', [AddsubjectController::class, 'newshow']);
     Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
     Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
+
 });
