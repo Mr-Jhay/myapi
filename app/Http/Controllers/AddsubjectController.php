@@ -58,27 +58,35 @@ class AddsubjectController extends Controller
     
     
     
-    public function index4()
+    public function index4(Request $request)
     {
+        // user
+        $user = auth()->user();
+
+        //validate the id if match
+        $student = DB::table('tblstudent')->where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return response()->json(['error' => 'Student record not found for the authenticated user.'], 404);
+        }
+
         $addstudents = DB::table('addstudent')
-        ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
-        ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
-        ->join('users', 'tblstudent.user_id', '=', 'users.id') // Join with users table using foreign key from tblstudent
-        ->select(
-            'addstudent.*', 
-             'users.fname as student_fname',
-             'users.mname as student_mname',
-             'users.lname as student_lname',
-            'tblsubject.subjectname as subject_name', 
-            'tblstudent.strand as student_strand'
-            
-            
-        ) // Select relevant columns with aliases
-        ->get();
-    
+            ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
+            ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
+            ->join('users', 'tblstudent.user_id', '=', 'users.id')
+            ->where('tblstudent.user_id', $user->id) // kukunin niya lang ung naka register sa id niya 
+            ->select(
+                'addstudent.*',
+                'users.fname as student_fname',
+                'users.mname as student_mname',
+                'users.lname as student_lname',
+                'tblsubject.subjectname as subject_name',
+                'tblstudent.strand as student_strand'
+            )
+            ->get();
+
         return response()->json($addstudents);
     }
-
     public function newshow()
 {
     $enrolledStudents = DB::table('addstudent')
