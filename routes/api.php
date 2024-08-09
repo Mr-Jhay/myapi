@@ -8,6 +8,12 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\AddsubjectController;
+use App\Http\Controllers\correctanwserController;
+use App\Http\Controllers\answeredQuestionController;
+use App\Http\Controllers\addchoicesController;
+use App\Http\Controllers\studentexamController;
+use App\Http\Controllers\tblquestionController;
+use App\Http\Controllers\tblscheduleController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -43,5 +49,14 @@ Route::group([
     Route::get('newshow', [AddsubjectController::class, 'newshow']);
     Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
     Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
+    Route::post('addexam', [tblscheduleController::class, 'addexam']);//schedule ng exam
+    Route::post('schedule', [studentexamController::class, 'schedule']);//para ma update mga student na may exam sila andito na yung student tapos exam nila
+    Route::post('addquestion', [tblquestionController::class, 'addquestion']);//pag add ng question
+    Route::post('addchoices', [addchoicesController::class, 'addchoices']);//pag add ng choices para sa question
+    Route::post('resultexam', [answeredQuestionController::class, 'resultexam']);//dito makikita yung result ng exam 
+    
+
+
+
 
 });
