@@ -24,30 +24,24 @@ Route::put('/user/{id}', [UserController::class, 'edit']);
 
 Route::group([
     "middleware" => "auth:sanctum"
-], function(){
-
-
-    Route::get('userprofile',[UserController::class,'userprofile']);
-   // Route::get('/users/{id}', [AuthController::class, 'show']);
-   Route::post('logout',[UserController::class,'logout']);
-  // Route::put('/user/{id}', [UserController::class, 'edit']);
-  //  Route::post('logout', 'AuthController@logout');
-  Route::get('userResourceCollection',[UserController::class,'userResourceCollection']);
-  Route::get('userresource',[UserController::class,'userresource']);
-  Route::post('store',[TeacherController::class,'store']); /// add position by teacher 
-  Route::post('store2',[StudentController::class,'store2']); //// add strand by student 
-  Route::get('/countstrand', [StudentController::class, 'countStrandStudents']);
-
-
-  Route::post('store3',[SubjectController::class,'store3']); //teacher add subject 
-  Route::get('index',[TeacherController::class,'index']); //show teacher user
-  Route::get('index2', [StudentController::class, 'index2']); ///show student users 
-
-  Route::put('users/{id}',[TeacherController::class,'update']);
-  Route::put('users/{id}',[StudentController::class,'update']);
-  Route::post('store4',[AddsubjectController::class,'store4']);/// student add subject /enroll
-  Route::get('index4',[AddsubjectController::class,'index4']);
-  Route::get('newshow',[AddsubjectController::class,'newshow']);//show ng lahat ng naka enroll
-  
+], function() {
+    Route::get('userprofile', [UserController::class, 'userprofile']);
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::get('userResourceCollection', [UserController::class, 'userResourceCollection']);
+    Route::get('userresource', [UserController::class, 'userresource']);
+    Route::post('store', [TeacherController::class, 'store']);//post position
+    Route::post('store2', [StudentController::class, 'store2']); ////post strand
+    Route::get('index2', [StudentController::class, 'index2']); ///// show students
+    Route::put('users/{id}',[TeacherController::class,'update']); //update teacher info
+    Route::put('users/{id}',[StudentController::class,'update']);//update student infos
+    Route::post('store3', [SubjectController::class, 'store3']); //teacher create subject
+    Route::get('/countstrand', [StudentController::class, 'countStrandStudents']);
+    Route::get('index', [TeacherController::class, 'index']);
+    Route::get('subjects', [SubjectController::class, 'index']);
+    Route::post('store4', [AddsubjectController::class, 'store4']);/// students enroll to the subject 
+    Route::get('index4', [AddsubjectController::class, 'index4']); /// show the enroll subject
+    Route::get('newshow', [AddsubjectController::class, 'newshow']);
+    Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
+    Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
 
 });
