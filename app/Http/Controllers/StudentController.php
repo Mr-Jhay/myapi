@@ -15,25 +15,33 @@ class StudentController extends Controller
     public function store2(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id|unique:tblstudent,user_id',
             'strand' => 'required|string|max:255',
             'gradelevel' => 'required|string|max:255',
         ]);
-
+    
+        // Get the authenticated user
+        $user = Auth::user();
+    
         // Check if the user has a usertype of 'student'
-        $user = User::find($request->user_id);
-
         if ($user->usertype !== 'student') {
             return response()->json(['error' => 'User is not a student'], 403);
         }
-
-        $student = tblstudent::create([ // Use the correct model name
-            'user_id' => $request->user_id,
+    
+        // Check if a record already exists for this user
+        $existingStudent = tblstudent::where('user_id', $user->id)->first();
+    
+        if ($existingStudent) {
+            return response()->json(['message' => 'Student record already exists'], 409);
+        }
+    
+        // Create the student record
+        $student = tblstudent::create([
+            'user_id' => $user->id,
             'strand' => $request->strand,
             'gradelevel' => $request->gradelevel,
         ]);
-
-        return response()->json($student, 201);
+    
+        return response()->json(['message' => 'Student record created successfully', 'student' => $student], 201);
     }
 
     public function index2()

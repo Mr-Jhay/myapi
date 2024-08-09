@@ -133,58 +133,79 @@ class UserController extends Controller
         'usertype' => $user->usertype,
     ]);
 }
-    public function userprofile()
-    {
-                    // Get the authenticated user
-            $user = auth()->user();
 
-            // Check if the user is authenticated
-            if (!$user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'User not authenticated',
-                ], 401);
-            }
 
-            // Define the timezone offset (e.g., +8 hours for Asia/Manila)
-            $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+public function userprofile()
+{
+    // Get the authenticated user
+    $user = auth()->user();
 
-            // Initialize the response data
-            $responseData = null;
-
-            // Check user role and fetch appropriate data
-            if ($user->usertype == 'student') {
-                // Fetch student data
-                $responseData = DB::table('users')
-                    ->join('tblstudent', 'users.id', '=', 'tblstudent.user_id')
-                    ->select('users.*', 'tblstudent.strand', 'tblstudent.gradelevel')
-                    ->where('users.id', $user->id)
-                    ->first();
-            } elseif ($user->usertype == 'teacher') {
-                // Fetch teacher data
-                $responseData = DB::table('users')
-                    ->join('tblteacher', 'users.id', '=', 'tblteacher.user_id')
-                    ->select('users.*', 'tblteacher.teacher_Position')
-                    ->where('users.id', $user->id)
-                    ->first();
-            } elseif ($user->usertype == 'admin') {
-                // For admin, just return the user data
-                $responseData = $user;
-            }
-
-            // Convert timestamps for response data
-            if ($responseData) {
-                $responseData->created_at = date('Y-m-d H:i:s', strtotime($responseData->created_at) + $timezoneOffset);
-                $responseData->updated_at = date('Y-m-d H:i:s', strtotime($responseData->updated_at) + $timezoneOffset);
-            }
-
-            // Return the user profile data
-            return response()->json([
-                'status' => true,
-                'message' => 'User Profile Data',
-                'data' => $responseData,
-            ], 200);
+    // Check if the user is authenticated
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => 'User not authenticated',
+        ], 401);
     }
+
+    // Define the timezone offset (e.g., +8 hours for Asia/Manila)
+    $timezoneOffset = 8 * 60 * 60; // Offset in seconds
+
+    // Initialize the response data
+    $responseData = null;
+
+    // Check user role and fetch appropriate data
+    if ($user->usertype == 'student') {
+        // Fetch student data
+        $responseData = DB::table('users')
+            ->leftJoin('tblstudent', 'users.id', '=', 'tblstudent.user_id')
+            ->select('users.*', 'tblstudent.strand', 'tblstudent.gradelevel')
+            ->where('users.id', $user->id)
+            ->first();
+
+        // If student data is null, just return user data
+        if (!$responseData->strand && !$responseData->gradelevel) {
+            $responseData = DB::table('users')
+                ->where('id', $user->id)
+                ->first();
+        }
+    } elseif ($user->usertype == 'teacher') {
+        // Fetch teacher data
+        $responseData = DB::table('users')
+            ->leftJoin('tblteacher', 'users.id', '=', 'tblteacher.user_id')
+            ->select('users.*', 'tblteacher.teacher_Position')
+            ->where('users.id', $user->id)
+            ->first();
+
+        // If teacher data is null, just return user data
+        if (!$responseData->teacher_Position) {
+            $responseData = DB::table('users')
+                ->where('id', $user->id)
+                ->first();
+        }
+    } elseif ($user->usertype == 'admin') {
+        // For admin, just return the user data
+        $responseData = $user;
+    }
+
+    // Convert timestamps for response data
+    if ($responseData) {
+        $responseData->created_at = date('Y-m-d H:i:s', strtotime($responseData->created_at) + $timezoneOffset);
+        $responseData->updated_at = date('Y-m-d H:i:s', strtotime($responseData->updated_at) + $timezoneOffset);
+    }
+
+    // Return the user profile data
+    return response()->json([
+        'status' => true,
+        'message' => 'User Profile Data',
+        'data' => $responseData,
+    ], 200);
+}
+
+
+
+
+
 
     public function logout()
     {

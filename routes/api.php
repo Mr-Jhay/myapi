@@ -25,7 +25,7 @@ Route::group([
 ], function(){
 
 
-    Route::get('userprofile',[UserController::class,'userprofile']);
+    Route::get('userprofile',[UserController::class,'userprofile']);//updated na ito userprofile both
    // Route::get('/users/{id}', [AuthController::class, 'show']);
    Route::post('logout',[UserController::class,'logout']);
   // Route::put('/user/{id}', [UserController::class, 'edit']);
@@ -46,6 +46,8 @@ Route::group([
   Route::post('store4',[AddsubjectController::class,'store4']);/// student add subject /enroll
   Route::get('index4',[AddsubjectController::class,'index4']);
   Route::get('newshow',[AddsubjectController::class,'newshow']);//show ng lahat ng naka enroll
+  Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
+  Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
   
 
 });
