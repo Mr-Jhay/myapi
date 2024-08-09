@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -12,6 +13,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::post('/generate-report', [ReportController::class, 'generateReport']);
 Route::get('/users', [UserController::class, 'index']);  ////ito ung linkk 
 Route::get('/users/students', [UserController::class, 'getStudentUsers']); ///students
 Route::get('/users/teachers', [UserController::class, 'getTeachersUsers']); ///Teachers
@@ -25,7 +27,7 @@ Route::group([
 ], function(){
 
 
-    Route::get('userprofile',[UserController::class,'userprofile']);//updated na ito userprofile both
+    Route::get('userprofile',[UserController::class,'userprofile']);
    // Route::get('/users/{id}', [AuthController::class, 'show']);
    Route::post('logout',[UserController::class,'logout']);
   // Route::put('/user/{id}', [UserController::class, 'edit']);
@@ -46,8 +48,6 @@ Route::group([
   Route::post('store4',[AddsubjectController::class,'store4']);/// student add subject /enroll
   Route::get('index4',[AddsubjectController::class,'index4']);
   Route::get('newshow',[AddsubjectController::class,'newshow']);//show ng lahat ng naka enroll
-  Route::put('subjects/{id}', [SubjectController::class, 'update']); // Update subject
-  Route::delete('subjects/{id}', [SubjectController::class, 'destroy']); // Delete subject
   
 
 });

@@ -58,26 +58,40 @@ class AddsubjectController extends Controller
     
     
     
-    public function index4()
-    {
-        $addstudents = DB::table('addstudent')
+    public function index4(Request $request)
+{
+    // Retrieve the authenticated user
+    $user = auth()->user();
+
+    // Validate if the student record exists
+    $student = DB::table('tblstudent')->where('user_id', $user->id)->first();
+
+    if (!$student) {
+        return response()->json(['error' => 'Student record not found for the authenticated user.'], 404);
+    }
+
+    $addstudents = DB::table('addstudent')
         ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
         ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
-        ->join('users', 'tblstudent.user_id', '=', 'users.id') // Join with users table using foreign key from tblstudent
+        ->join('users as student_users', 'tblstudent.user_id', '=', 'student_users.id') // Alias for student user info
+        ->join('tblteacher', 'tblsubject.teacher_id', '=', 'tblteacher.id')
+        ->join('users as teacher_users', 'tblteacher.user_id', '=', 'teacher_users.id') // Alias for teacher user info
+        ->where('tblstudent.user_id', $user->id) 
         ->select(
-            'addstudent.*', 
-             'users.fname as student_fname',
-             'users.mname as student_mname',
-             'users.lname as student_lname',
-            'tblsubject.subjectname as subject_name', 
-            'tblstudent.strand as student_strand'
-            
-            
-        ) // Select relevant columns with aliases
+            'addstudent.*',
+            'student_users.fname as student_fname',
+            'student_users.mname as student_mname',
+            'student_users.lname as student_lname',
+            'tblsubject.subjectname as subject_name',
+            'tblstudent.strand as student_strand',
+            'teacher_users.fname as teacher_fname', // Teacher's first name
+            'teacher_users.mname as teacher_mname', // Teacher's middle name
+            'teacher_users.lname as teacher_lname'  // Teacher's last name
+        )
         ->get();
-    
-        return response()->json($addstudents);
-    }
+
+    return response()->json($addstudents);
+}
 
     public function newshow()
 {
