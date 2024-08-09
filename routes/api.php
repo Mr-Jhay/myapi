@@ -25,7 +25,7 @@ Route::put('/user/{id}', [UserController::class, 'edit']);
 Route::group([
     "middleware" => "auth:sanctum"
 ], function() {
-    Route::get('userprofile', [UserController::class, 'userprofile']);
+    Route::get('userprofile', [UserController::class, 'userprofile']);//updated n aito
     Route::post('logout', [UserController::class, 'logout']);
     Route::get('userResourceCollection', [UserController::class, 'userResourceCollection']);
     Route::get('userresource', [UserController::class, 'userresource']);
