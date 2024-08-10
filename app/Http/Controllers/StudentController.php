@@ -10,7 +10,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
-
 class StudentController extends Controller
 {
     public function store2(Request $request)
