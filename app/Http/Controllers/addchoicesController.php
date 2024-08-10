@@ -8,6 +8,7 @@ use App\Models\addchoices;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class addchoicesController extends Controller
 {
@@ -21,7 +22,7 @@ class addchoicesController extends Controller
 
         // Determine the tblquestion_id automatically
         // Example: Get the most recent question or based on some logic
-        $tblquestion = Question::latest('created_at')->first(); // Adjust logic as needed
+        $tblquestion = tblquestion::latest('created_at')->first(); // Adjust logic as needed
         $tblquestion_id = $tblquestion ? $tblquestion->id : null;
 
         // If no question is found, handle this scenario
@@ -35,7 +36,7 @@ class addchoicesController extends Controller
         $validatedData['tblquestion_id'] = $tblquestion_id;
 
         // Create a new addchoice record
-        $addChoice = AddChoice::create($validatedData);
+        $addChoice = addchoices::create($validatedData);
 
         // Return a JSON response with a custom message
         return response()->json([

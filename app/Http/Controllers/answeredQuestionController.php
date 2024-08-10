@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\tblteacher;
 use App\Models\User;
 use App\Models\addchoices;
-use App\Models\answered_question;
+use App\Models\answeredQuestion;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class answeredQuestionController extends Controller
 {
@@ -22,7 +23,7 @@ class answeredQuestionController extends Controller
 
         // Determine the tblquestion_id automatically
         // Example: Get the most recent question
-        $tblquestion = Question::latest('created_at')->first();
+        $tblquestion = tblquestion::latest('created_at')->first();
         $tblquestion_id = $tblquestion ? $tblquestion->id : null;
 
         // If no question is found, handle this scenario
@@ -34,7 +35,7 @@ class answeredQuestionController extends Controller
 
         // Determine the correctanswer_id automatically
         // Example: Get the most recent correct answer
-        $correctAnswer = CorrectAnswer::latest('created_at')->first();
+        $correctAnswer = correctanswer::latest('created_at')->first();
         $correctanswer_id = $correctAnswer ? $correctAnswer->id : null;
 
         // If no correct answer is found, handle this scenario
@@ -54,7 +55,7 @@ class answeredQuestionController extends Controller
         $validatedData['tblstudent_id'] = $tblstudent_id;
 
         // Create a new answered_question record
-        $answeredQuestion = AnsweredQuestion::create($validatedData);
+        $answeredQuestion = answeredQuestion::create($validatedData);
 
         // Return a JSON response with a custom message
         return response()->json([

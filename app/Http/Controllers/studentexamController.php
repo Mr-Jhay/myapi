@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\tblteacher;
+use App\Models\studentexam;
+use App\Models\tblschedule;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class studentexamController extends Controller
 {
@@ -22,7 +25,7 @@ class studentexamController extends Controller
         $tblstudent_id = $user->tblstudent_id; // Assuming the user model has tblstudent_id
 
         // Get the most recent tblschedule_id
-        $tblschedule = Schedule::latest('created_at')->first();
+        $tblschedule = tblschedule::latest('created_at')->first();
         $tblschedule_id = $tblschedule ? $tblschedule->id : null;
 
         // If no schedule is found, you might want to handle this scenario
@@ -37,7 +40,7 @@ class studentexamController extends Controller
         $validatedData['tblschedule_id'] = $tblschedule_id;
 
         // Create a new studentexam record
-        $studentExam = StudentExam::create($validatedData);
+        $studentExam = studentexam::create($validatedData);
 
         // Return a JSON response with a custom message
         return response()->json([

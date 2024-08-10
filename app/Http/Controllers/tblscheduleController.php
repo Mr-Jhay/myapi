@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\tblteacher;
 use App\Models\User;
+use App\Models\tblschedule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class tblscheduleController extends Controller
 {
@@ -30,7 +32,7 @@ class tblscheduleController extends Controller
         $validatedData['subject_id'] = $subject_id;
 
         // Create a new schedule record
-        $schedule = Schedule::create($validatedData);
+        $schedule = tblschedule::create($validatedData);
 
         // Return a JSON response with a custom message
         return response()->json([

@@ -5,6 +5,7 @@ use App\Models\tblsubject;
 use App\Models\tblstudent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AddsubjectController extends Controller
 {
