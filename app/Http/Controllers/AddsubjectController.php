@@ -94,19 +94,25 @@ class AddsubjectController extends Controller
     return response()->json($addstudents);
 }
 
-    public function newshow()
+public function newshow()
 {
     $enrolledStudents = DB::table('addstudent')
         ->join('tblsubject', 'addstudent.subject_id', '=', 'tblsubject.id')
         ->join('tblstudent', 'addstudent.student_id', '=', 'tblstudent.id')
-        ->join('users', 'tblstudent.user_id', '=', 'users.id')
+        ->join('users as students', 'tblstudent.user_id', '=', 'students.id')
+        ->join('tblteacher', 'tblsubject.teacher_id', '=', 'tblteacher.id') // Join tblteacher with tblsubject
+        ->join('users as teachers', 'tblteacher.user_id', '=', 'teachers.id') // Join users table with tblteacher
         ->select(
             'addstudent.*', 
-            'users.fname as student_fname',
-            'users.mname as student_mname',
-            'users.lname as student_lname',
+            'students.fname as student_fname',
+            'students.mname as student_mname',
+            'students.lname as student_lname',
             'tblsubject.subjectname as subject_name', 
-            'tblstudent.strand as student_strand'
+            'tblstudent.strand as student_strand',
+            'teachers.fname as teacher_fname', // Teacher's first name
+            'teachers.mname as teacher_mname', // Teacher's middle name
+            'teachers.lname as teacher_lname', // Teacher's last name
+            'tblteacher.teacher_Position as teacher_position' // Teacher's position
         )
         ->whereNotNull('addstudent.subject_id') // Ensure students have enrolled in a subject
         ->get();
