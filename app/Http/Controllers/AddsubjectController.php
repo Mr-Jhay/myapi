@@ -119,4 +119,30 @@ public function newshow()
 
     return response()->json($enrolledStudents);
 }
+
+public function listSubjectsForTeacher()
+{
+    // Retrieve the authenticated user
+    $user = auth()->user();
+
+    // Retrieve the teacher's record based on the authenticated user's ID
+    $teacher = DB::table('tblteacher')->where('user_id', $user->id)->first();
+
+    // Check if the teacher exists
+    if (!$teacher) {
+        return response()->json(['error' => 'Teacher record not found for the authenticated user.'], 404);
+    }
+
+    // Retrieve the subjects associated with the authenticated teacher
+    $subjects = DB::table('tblsubject')
+        ->where('teacher_id', $teacher->id)
+        ->select(
+            'id as subject_id',
+            'subjectname',
+            'gen_code'
+        )
+        ->get();
+
+    return response()->json($subjects);
+}
 }
